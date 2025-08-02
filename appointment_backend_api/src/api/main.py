@@ -6,6 +6,7 @@ from src.api import user
 from src.api import doctor
 from src.api import timeslot
 from src.api import appointment
+from src.api import notification
 
 app = FastAPI(
     title="Appointment Booking API",
@@ -26,6 +27,7 @@ app.include_router(user.router)
 app.include_router(doctor.router)
 app.include_router(timeslot.router)
 app.include_router(appointment.router)
+app.include_router(notification.router)  # Register notification endpoints
 
 @app.get("/", tags=["Health"])
 def health_check():

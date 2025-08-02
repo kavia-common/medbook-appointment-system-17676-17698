@@ -87,6 +87,20 @@ def book_appointment(
     db.refresh(appt)
     db.refresh(timeslot)
 
+    # --- Trigger notification for doctor (appointment request) ---
+    # Notification to doctor for new appointment request
+    notif = models.Notification(
+        user_id=doctor.user_id,
+        appointment_id=appt.id,
+        type=models.NotificationTypeEnum.APPOINTMENT_REQUEST,
+        message=f"New appointment request from {patient.user.full_name}.",
+        created_at=datetime.utcnow(),
+        is_read=False,
+    )
+    db.add(notif)
+    db.commit()
+    db.refresh(notif)
+
     return schemas.AppointmentRead(
         id=appt.id,
         patient_id=appt.patient_id,
@@ -155,6 +169,29 @@ def confirm_or_reject_appointment(
     db.add(appt)
     db.commit()
     db.refresh(appt)
+
+    # --- Trigger notification for patient regarding status update ---
+    notif_type = models.NotificationTypeEnum.APPOINTMENT_UPDATE
+    if appt.status == models.AppointmentStatusEnum.CONFIRMED:
+        message = f"Your appointment with Dr. {appt.doctor.user.full_name} has been confirmed."
+    else:
+        # REJECTED
+        message = f"Your appointment with Dr. {appt.doctor.user.full_name} was rejected."
+        if status_req.note:
+            message += f" Reason: {status_req.note}"
+
+    notif = models.Notification(
+        user_id=appt.patient.user_id,
+        appointment_id=appt.id,
+        type=notif_type,
+        message=message,
+        created_at=datetime.utcnow(),
+        is_read=False,
+    )
+    db.add(notif)
+    db.commit()
+    db.refresh(notif)
+
     return schemas.AppointmentRead(
         id=appt.id,
         patient_id=appt.patient_id,
