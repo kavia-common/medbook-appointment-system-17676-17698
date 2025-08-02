@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import auth
 from src.api import user
+from src.api import doctor
+from src.api import timeslot
 
 app = FastAPI(
     title="Appointment Booking API",
@@ -20,6 +22,8 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(user.router)
+app.include_router(doctor.router)
+app.include_router(timeslot.router)
 
 @app.get("/", tags=["Health"])
 def health_check():
