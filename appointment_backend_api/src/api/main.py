@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import auth
+from src.api import user
 
 app = FastAPI(
     title="Appointment Booking API",
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(user.router)
 
 @app.get("/", tags=["Health"])
 def health_check():
