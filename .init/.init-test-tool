@@ -1,0 +1,4 @@
+{
+    "command": "pytest",
+    "working_directory": "/home/kavia/workspace/code-generation/medbook-appointment-system-17676-17698/appointment_backend_api"
+}
