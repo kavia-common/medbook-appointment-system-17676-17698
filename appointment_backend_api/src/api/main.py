@@ -1,7 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from src.api import auth
+
+app = FastAPI(
+    title="Appointment Booking API",
+    description="API for an appointment booking system. Provides authentication, registration, and role-based model for patients and doctors.",
+    version="0.1.0"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -11,6 +17,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+app.include_router(auth.router)
+
+@app.get("/", tags=["Health"])
 def health_check():
+    """Health check endpoint."""
     return {"message": "Healthy"}
